@@ -1,56 +1,18 @@
-version: '3'
+version: '3.1'
 
 services:
-  # db:
-  #   image: mysql:8.0
-  #   container_name: db
-  #   restart: unless-stopped
-  #   env_file: .env
-  #   environment:
-  #     - MYSQL_DATABASE=wordpress
-  #   volumes:
-  #     - type: bind
-  #       source: /var/lib/efs/mysql
-  #       target: /var/lib/mysql
-  #   command: '--default-authentication-plugin=mysql_native_password'
-  #   networks:
-  #     - app-network
-
-  wordpress:
-    # depends_on:
-    #   - db
-    image: wordpress:5.1.1-fpm-alpine
-    container_name: wordpress
+  joomla:
+    image: joomla
     restart: always
+    ports:
+      - 80:80
     env_file: .env
     environment:
-      - WORDPRESS_DB_HOST=$MYSQL_DB
-      - WORDPRESS_DB_USER=$MYSQL_USER
-      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
-      - WORDPRESS_DB_NAME=uascloud
+      - JOOMLA_DB_HOST=$MYSQL_DB_HOST
+      - JOOMLA_DB_PASSWORD=$MYSQL_DB_PASSWORD
+      - JOOMLA_DB_USER=$MYSQL_DB_USER
+      - JOOMLA_DB_NAME=MYSQL_DB_NAME
     volumes:
       - type: bind
-        source: /var/lib/uascloud
+        source: /home/ec2-user/efs
         target: /var/www/html
-    networks:
-      - app-network
-
-
-  # certbot:
-  #   depends_on:
-  #     - webserver
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   volumes:
-  #     - certbot-etc:/etc/letsencrypt
-  #     - /var/lib/efs/wordpress:/var/www/html
-  #   command: certonly --webroot --webroot-path=/var/www/html --email mishael.elian@ti.ukdw.ac.id --agree-tos --no-eff-email -d wordpres-finalcloud-815283555.us-east-1.elb.amazonaws.com
-
-# volumes:
-  # certbot-etc:
-  # wordpress:
-  # dbdata:
-
-networks:
-  app-network:
-    driver: bridge
